@@ -133,12 +133,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const Text('TOTAL P/L', style: TextStyle(color: Colors.white54, fontSize: 10)),
-                  Text(
-                    '${(data?.totalProfitLoss ?? 0) >= 0 ? '+' : ''}${currencyFormat.format(data?.totalProfitLoss ?? 0)}',
-                    style: TextStyle(
-                      color: (data?.totalProfitLoss ?? 0) >= 0 ? AppColors.success : AppColors.error,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        '${(data?.totalProfitLoss ?? 0) >= 0 ? '+' : ''}${currencyFormat.format(data?.totalProfitLoss ?? 0)}',
+                        style: TextStyle(
+                          color: (data?.totalProfitLoss ?? 0) >= 0 ? AppColors.success : AppColors.error,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        '(${((data?.totalProfitLoss ?? 0) / (data?.totalInvestment ?? 1) * 100).toStringAsFixed(2)}%)',
+                        style: TextStyle(
+                          color: (data?.totalProfitLoss ?? 0) >= 0 ? AppColors.success : AppColors.error,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
