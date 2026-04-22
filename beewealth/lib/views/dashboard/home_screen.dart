@@ -7,8 +7,6 @@ import '../../providers/auth_provider.dart';
 import '../../providers/dashboard_provider.dart';
 import '../../core/theme/app_theme.dart';
 import '../../widgets/app_widgets.dart';
-import '../ledger/ledger_screen.dart';
-import '../profile/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -61,12 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 background: Container(color: AppColors.background),
               ),
-              actions: [
-                IconButton(
-                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const ProfileScreen())),
-                  icon: const Icon(Icons.person_outline, color: AppColors.primary),
-                ),
-              ],
             ),
             SliverToBoxAdapter(
               child: Padding(
@@ -84,13 +76,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildPerformanceChart(dashboard),
-                    const SizedBox(height: 32),
-                    const Text(
-                      'Quick Actions',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildQuickActions(),
                     const SizedBox(height: 100),
                   ],
                 ),
@@ -241,84 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildQuickActions() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildActionButton('Deposit', Icons.add_circle_outline, () => _showRequestDialog(true)),
-        _buildActionButton('Withdraw', Icons.remove_circle_outline, () => _showRequestDialog(false)),
-        _buildActionButton('History', Icons.history, () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const LedgerScreen()));
-        }),
-      ],
-    );
-  }
-
-  Widget _buildActionButton(String label, IconData icon, VoidCallback onTap) {
-    return Column(
-      children: [
-        InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(15),
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: AppColors.primary.withAlpha(20),
-              borderRadius: BorderRadius.circular(15),
-              border: Border.all(color: AppColors.primary.withAlpha(50)),
-            ),
-            child: Icon(icon, color: AppColors.primary),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(label, style: const TextStyle(fontSize: 12, color: Colors.white70)),
-      ],
-    );
-  }
-
-  void _showRequestDialog(bool isInvestment) {
-    final controller = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.cardBg,
-        surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20), side: const BorderSide(color: AppColors.glassBorder)),
-        title: Text(isInvestment ? 'Investment Request' : 'Withdrawal Request', style: const TextStyle(color: AppColors.primary)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomTextField(
-              label: 'Amount',
-              hint: '0.00',
-              controller: controller,
-              keyboardType: TextInputType.number,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
-          CustomButton(
-            text: 'Submit',
-            onPressed: () async {
-              final amount = double.tryParse(controller.text) ?? 0;
-              if (amount > 0) {
-                final dashboard = Provider.of<DashboardProvider>(context, listen: false);
-                final success = isInvestment ? await dashboard.requestInvestment(amount) : await dashboard.requestWithdrawal(amount);
-                if (mounted) {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(success ? 'Request submitted successfully' : (dashboard.error ?? 'Request failed'))),
-                  );
-                }
-              }
-            },
-          ),
-        ],
       ),
     );
   }

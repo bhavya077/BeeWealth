@@ -2,6 +2,7 @@ class User {
   final String email;
   final String name;
   final String role;
+  final String? membershipId;
   final String? mobile;
   final String? bankName;
   final String? accountNumber;
@@ -13,6 +14,7 @@ class User {
     required this.email,
     required this.name,
     required this.role,
+    this.membershipId,
     this.mobile,
     this.bankName,
     this.accountNumber,
@@ -26,6 +28,7 @@ class User {
       email: json['email'] ?? '',
       name: json['name'] ?? '',
       role: json['role'] ?? 'user',
+      membershipId: json['membership_id'],
       mobile: json['mobile'],
       bankName: json['bank_name'],
       accountNumber: json['account_number'],
@@ -40,6 +43,7 @@ class User {
       'email': email,
       'name': name,
       'role': role,
+      'membership_id': membershipId,
       'mobile': mobile,
       'bank_name': bankName,
       'account_number': accountNumber,

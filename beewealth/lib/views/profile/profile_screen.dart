@@ -97,7 +97,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       user?.email ?? '',
                       style: const TextStyle(color: Colors.white54),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 12),
+                    if (user?.membershipId != null)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(10),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: AppColors.glassBorder),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.badge_outlined, color: AppColors.primary, size: 16),
+                            const SizedBox(width: 8),
+                            Text(
+                              user!.membershipId!,
+                              style: const TextStyle(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(

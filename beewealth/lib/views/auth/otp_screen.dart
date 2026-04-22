@@ -4,7 +4,7 @@ import 'package:animate_do/animate_do.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/app_widgets.dart';
 import '../../core/theme/app_theme.dart';
-import '../dashboard/home_screen.dart';
+import '../main_layout.dart';
 
 class OtpScreen extends StatefulWidget {
   final String email;
@@ -30,7 +30,7 @@ class _OtpScreenState extends State<OtpScreen> {
         if (mounted) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
+            MaterialPageRoute(builder: (context) => const MainLayout()),
             (route) => false,
           );
         }

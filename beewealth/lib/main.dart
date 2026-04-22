@@ -6,7 +6,7 @@ import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/dashboard_provider.dart';
 import 'views/auth/login_screen.dart';
-import 'views/dashboard/home_screen.dart';
+import 'views/main_layout.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -71,7 +71,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         if (auth.isLoggedIn) {
-          return const HomeScreen();
+          return const MainLayout();
         } else {
           return const LoginScreen();
         }
