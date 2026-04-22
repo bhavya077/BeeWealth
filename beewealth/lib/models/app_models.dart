@@ -54,6 +54,32 @@ class User {
   }
 }
 
+class FundRequest {
+  final int id;
+  final double amount;
+  final String status;
+  final DateTime requestedAt;
+  final String adminNote;
+
+  FundRequest({
+    required this.id,
+    required this.amount,
+    required this.status,
+    required this.requestedAt,
+    required this.adminNote,
+  });
+
+  factory FundRequest.fromJson(Map<String, dynamic> json) {
+    return FundRequest(
+      id: json['id'],
+      amount: double.tryParse(json['amount'].toString()) ?? 0.0,
+      status: json['status'],
+      requestedAt: DateTime.parse(json['requested_at']),
+      adminNote: json['admin_note'] ?? '',
+    );
+  }
+}
+
 class DashboardData {
   final double totalInvestment;
   final double totalProfitLoss;

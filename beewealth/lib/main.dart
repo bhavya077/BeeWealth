@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/dashboard_provider.dart';
+import 'providers/trade_provider.dart';
 import 'views/auth/login_screen.dart';
 import 'views/main_layout.dart';
 
@@ -30,6 +31,7 @@ void main() {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => DashboardProvider()),
+        ChangeNotifierProvider(create: (_) => TradeProvider()),
       ],
       child: const BeeWealthApp(),
     ),
