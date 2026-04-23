@@ -205,6 +205,18 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
+     // FILTER DATA based on selected range
+    List<PerformanceData> displayData = List.of(chartData);
+    if (_selectedRange == '1D') {
+      displayData = displayData.length > 10 ? displayData.sublist(displayData.length - 10) : displayData;
+    } else if (_selectedRange == '1W') {
+      displayData = displayData.length > 20 ? displayData.sublist(displayData.length - 20) : displayData;
+    } else if (_selectedRange == '1M') {
+      displayData = displayData.length > 40 ? displayData.sublist(displayData.length - 40) : displayData;
+    }
+
+    const themeGold = AppColors.primary;
+
     return Column(
       children: [
         Row(
@@ -214,16 +226,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'ANALYTICS',
+                    'TERMINAL VIEW',
                     style: TextStyle(
-                      color: AppColors.primary.withOpacity(0.6),
+                      color: themeGold.withOpacity(0.6),
                       fontSize: 8,
                       fontWeight: FontWeight.w900,
                       letterSpacing: 2.5,
                     ),
                   ),
                   Text(
-                    'PORTFOLIO WAVEFORM',
+                    'EQUITY WAVEFORM',
                     style: GoogleFonts.outfit(
                       fontSize: 16,
                       fontWeight: FontWeight.w900,
@@ -239,88 +251,79 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 48),
         SizedBox(
-          height: 280,
+          height: 300,
           child: LineChart(
             LineChartData(
               lineTouchData: LineTouchData(
-                touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-                  if (response == null || response.lineBarSpots == null) {
-                    setState(() { _touchedIndex = -1; });
-                    return;
-                  }
-                  setState(() {
-                    _touchedIndex = response.lineBarSpots!.first.spotIndex;
-                  });
-                },
                 handleBuiltInTouches: true,
-                getTouchedSpotIndicator: (LineChartBarData barData, List<int> spotIndexes) {
-                  return spotIndexes.map((index) {
-                    return TouchedSpotIndicatorData(
-                      FlLine(
-                        color: AppColors.primary.withOpacity(0.2),
-                        strokeWidth: 2,
-                        dashArray: [5, 5],
-                      ),
-                      FlDotData(
-                        show: true,
-                        getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                          radius: 5,
-                          color: AppColors.primary,
-                          strokeColor: AppColors.background,
-                          strokeWidth: 2,
-                        ),
-                      ),
-                    );
-                  }).toList();
-                },
                 touchTooltipData: LineTouchTooltipData(
-                  tooltipBgColor: const Color(0xFF1E2128).withOpacity(0.95),
-                  tooltipRoundedRadius: 12,
-                  tooltipBorder: BorderSide(color: AppColors.primary.withOpacity(0.2), width: 1),
+                  tooltipBgColor: const Color(0xFF000000).withOpacity(0.95),
+                  tooltipRoundedRadius: 4,
+                  tooltipBorder: BorderSide(color: themeGold.withOpacity(0.2)),
                   getTooltipItems: (touchedSpots) {
                     return touchedSpots.map((spot) {
-                      final data = chartData[spot.x.toInt()];
                       return LineTooltipItem(
-                        '', // No text in header
-                        const TextStyle(fontSize: 0),
-                        children: [
-                          TextSpan(
-                            text: 'VALUATION\n',
-                            style: TextStyle(color: AppColors.primary.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1),
-                          ),
-                          TextSpan(
-                            text: '${currencyFormat.format(data.amount)}\n',
-                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
-                          ),
-                          TextSpan(
-                            text: DateFormat('MMM dd, HH:mm').format(DateTime.tryParse(data.date) ?? DateTime.now()),
-                            style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 8, fontWeight: FontWeight.bold),
-                          ),
-                        ],
+                        currencyFormat.format(spot.y),
+                        const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
                       );
                     }).toList();
                   },
                 ),
               ),
-              gridData: const FlGridData(show: false),
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: true,
+                horizontalInterval: 25000, 
+                verticalInterval: 1,
+                getDrawingHorizontalLine: (value) => FlLine(color: Colors.white.withOpacity(0.015), strokeWidth: 0.5),
+                getDrawingVerticalLine: (value) => FlLine(color: Colors.white.withOpacity(0.015), strokeWidth: 0.5),
+              ),
               titlesData: FlTitlesData(
                 show: true,
-                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 52,
+                    getTitlesWidget: (value, meta) {
+                      if (value == meta.min || value == meta.max) return const SizedBox();
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 12.0),
+                        child: Text(
+                          NumberFormat.compact().format(value),
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.15),
+                            fontSize: 9,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 32,
-                    interval: (chartData.length / 4).clamp(1, 100).toDouble(),
+                    reservedSize: 28,
+                    interval: (displayData.length / 4).clamp(1, 100).toDouble(),
                     getTitlesWidget: (value, meta) {
-                      if (value.toInt() >= chartData.length) return const SizedBox();
-                      final dateStr = chartData[value.toInt()].date;
+                      if (value.toInt() >= displayData.length) return const SizedBox();
+                      final dateStr = displayData[value.toInt()].date;
+                      final date = DateTime.tryParse(dateStr) ?? DateTime.now();
+                      
+                      // Using 'dd MMM' (e.g. 23 APR) to eliminate '00:00' confusion
+                      final label = DateFormat('dd MMM').format(date);
+
                       return Padding(
-                        padding: const EdgeInsets.only(top: 14.0),
+                        padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
-                          DateFormat('MMM dd').format(DateTime.tryParse(dateStr) ?? DateTime.now()).toUpperCase(),
-                          style: TextStyle(color: Colors.white.withOpacity(0.1), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                          label.toUpperCase(),
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.1),
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       );
                     },
@@ -330,10 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
               borderData: FlBorderData(show: false),
               lineBarsData: [
                 LineChartBarData(
-                  spots: chartData.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.amount)).toList(),
+                  spots: displayData.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.amount)).toList(),
                   isCurved: true,
-                  curveSmoothness: 0.35,
-                  color: AppColors.primary,
+                  curveSmoothness: 0.3,
+                  color: themeGold,
                   barWidth: 2,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
@@ -341,20 +344,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.15),
-                        AppColors.primary.withOpacity(0.05),
-                        AppColors.primary.withOpacity(0.01),
-                        Colors.transparent,
+                        themeGold.withOpacity(0.12),
+                        themeGold.withOpacity(0.0),
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.3, 0.6, 1.0],
                     ),
-                  ),
-                  shadow: Shadow(
-                    color: AppColors.primary.withOpacity(0.2),
-                    blurRadius: 15,
-                    offset: const Offset(0, 8),
                   ),
                 ),
               ],

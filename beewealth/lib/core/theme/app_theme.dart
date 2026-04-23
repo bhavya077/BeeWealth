@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  static const Color background = Color(0xFF020408);
+  static const Color background = Color(0xFF000000);
   static const Color foreground = Color(0xFFF8FAFC);
   static const Color primary = Color(0xFFD4AF37); // Metallic Gold
   static const Color secondary = Color(0xFFC5A028); // Deep Gold
