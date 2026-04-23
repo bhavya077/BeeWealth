@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:intl/intl.dart';
@@ -140,35 +141,48 @@ class _HomeScreenState extends State<HomeScreen> {
           style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 4),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.baseline,
-          textBaseline: TextBaseline.alphabetic,
-          children: [
-            Text(
-              currencyFormat.format(data?.currentValue ?? 0).split('.')[0],
-              style: const TextStyle(fontSize: 38, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            Text(
-              '.${(data?.currentValue ?? 0).toStringAsFixed(2).split('.')[1]}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white.withOpacity(0.5)),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: (isProfit ? AppColors.success : AppColors.error).withOpacity(0.15),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                '${isProfit ? '▲' : '▼'} ${((data?.totalProfitLoss ?? 0) / (data?.totalInvestment ?? 1) * 100).toStringAsFixed(2)}%',
-                style: TextStyle(
-                  color: isProfit ? AppColors.success : AppColors.error,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w800,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text(
+                currencyFormat.format(data?.currentValue ?? 0).split('.')[0],
+                style: GoogleFonts.outfit(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: -0.5,
                 ),
               ),
-            ),
-          ],
+              Text(
+                '.${(data?.currentValue ?? 0).toStringAsFixed(2).split('.')[1]}',
+                style: GoogleFonts.outfit(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white.withOpacity(0.4),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: (isProfit ? AppColors.success : AppColors.error).withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Text(
+                  '${isProfit ? '▲' : '▼'} ${((data?.totalProfitLoss ?? 0) / (data?.totalInvestment ?? 1) * 100).toStringAsFixed(2)}%',
+                  style: TextStyle(
+                    color: isProfit ? AppColors.success : AppColors.error,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ],
     );
@@ -195,36 +209,37 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Row(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'ANALYTICS',
-                  style: TextStyle(
-                    color: AppColors.primary.withOpacity(0.6),
-                    fontSize: 8,
-                    fontWeight: FontWeight.w900,
-                    letterSpacing: 2.5,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'ANALYTICS',
+                    style: TextStyle(
+                      color: AppColors.primary.withOpacity(0.6),
+                      fontSize: 8,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2.5,
+                    ),
                   ),
-                ),
-                const Text(
-                  'PERFORMANCE HISTORY',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                    color: Colors.white,
+                  Text(
+                    'PORTFOLIO WAVEFORM',
+                    style: GoogleFonts.outfit(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 1,
+                      color: Colors.white,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const Spacer(),
             _buildRangeSelector(),
           ],
         ),
-        const SizedBox(height: 32),
+        const SizedBox(height: 48),
         SizedBox(
-          height: 260,
+          height: 280,
           child: LineChart(
             LineChartData(
               lineTouchData: LineTouchData(
@@ -242,13 +257,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   return spotIndexes.map((index) {
                     return TouchedSpotIndicatorData(
                       FlLine(
-                        color: AppColors.primary.withOpacity(0.15),
-                        strokeWidth: 20, // Wide aura bar
+                        color: AppColors.primary.withOpacity(0.2),
+                        strokeWidth: 2,
+                        dashArray: [5, 5],
                       ),
                       FlDotData(
                         show: true,
                         getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                          radius: 4,
+                          radius: 5,
                           color: AppColors.primary,
                           strokeColor: AppColors.background,
                           strokeWidth: 2,
@@ -258,18 +274,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   }).toList();
                 },
                 touchTooltipData: LineTouchTooltipData(
-                  tooltipBgColor: const Color(0xFF1A1D23).withOpacity(0.9),
-                  tooltipRoundedRadius: 8,
+                  tooltipBgColor: const Color(0xFF1E2128).withOpacity(0.95),
+                  tooltipRoundedRadius: 12,
+                  tooltipBorder: BorderSide(color: AppColors.primary.withOpacity(0.2), width: 1),
                   getTooltipItems: (touchedSpots) {
                     return touchedSpots.map((spot) {
                       final data = chartData[spot.x.toInt()];
                       return LineTooltipItem(
-                        '${currencyFormat.format(data.amount)}\n',
-                        const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 13),
+                        '', // No text in header
+                        const TextStyle(fontSize: 0),
                         children: [
                           TextSpan(
-                            text: DateFormat('dd MMM, HH:mm').format(DateTime.tryParse(data.date) ?? DateTime.now()),
-                            style: TextStyle(color: Colors.white.withOpacity(0.5), fontSize: 9, fontWeight: FontWeight.normal),
+                            text: 'VALUATION\n',
+                            style: TextStyle(color: AppColors.primary.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 1),
+                          ),
+                          TextSpan(
+                            text: '${currencyFormat.format(data.amount)}\n',
+                            style: GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14),
+                          ),
+                          TextSpan(
+                            text: DateFormat('MMM dd, HH:mm').format(DateTime.tryParse(data.date) ?? DateTime.now()),
+                            style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 8, fontWeight: FontWeight.bold),
                           ),
                         ],
                       );
@@ -277,45 +302,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               ),
-              gridData: FlGridData(
-                show: true,
-                drawVerticalLine: false, // Horizontal only for professional look
-                horizontalInterval: 50000,
-                getDrawingHorizontalLine: (value) => FlLine(
-                  color: Colors.white.withOpacity(0.03),
-                  strokeWidth: 1,
-                ),
-              ),
+              gridData: const FlGridData(show: false),
               titlesData: FlTitlesData(
                 show: true,
                 rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      if (value == meta.min || value == meta.max) return const SizedBox();
-                      return Text(
-                        NumberFormat.compact().format(value),
-                        style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 9, fontWeight: FontWeight.bold),
-                      );
-                    },
-                  ),
-                ),
+                leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   sideTitles: SideTitles(
                     showTitles: true,
-                    reservedSize: 30,
-                    interval: (chartData.length / 3).clamp(1, 100).toDouble(),
+                    reservedSize: 32,
+                    interval: (chartData.length / 4).clamp(1, 100).toDouble(),
                     getTitlesWidget: (value, meta) {
                       if (value.toInt() >= chartData.length) return const SizedBox();
                       final dateStr = chartData[value.toInt()].date;
                       return Padding(
-                        padding: const EdgeInsets.only(top: 12.0),
+                        padding: const EdgeInsets.only(top: 14.0),
                         child: Text(
                           DateFormat('MMM dd').format(DateTime.tryParse(dateStr) ?? DateTime.now()).toUpperCase(),
-                          style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
+                          style: TextStyle(color: Colors.white.withOpacity(0.1), fontSize: 8, fontWeight: FontWeight.w900, letterSpacing: 0.5),
                         ),
                       );
                     },
@@ -327,28 +332,29 @@ class _HomeScreenState extends State<HomeScreen> {
                 LineChartBarData(
                   spots: chartData.asMap().entries.map((e) => FlSpot(e.key.toDouble(), e.value.amount)).toList(),
                   isCurved: true,
-                  curveSmoothness: 0.15, // Tension for professional look
+                  curveSmoothness: 0.35,
                   color: AppColors.primary,
-                  barWidth: 1.5, // Thinner line
+                  barWidth: 2,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
                   belowBarData: BarAreaData(
                     show: true,
                     gradient: LinearGradient(
                       colors: [
-                        AppColors.primary.withOpacity(0.08),
-                        AppColors.primary.withOpacity(0.02),
+                        AppColors.primary.withOpacity(0.15),
+                        AppColors.primary.withOpacity(0.05),
+                        AppColors.primary.withOpacity(0.01),
                         Colors.transparent,
                       ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      stops: const [0.0, 0.4, 1.0],
+                      stops: const [0.0, 0.3, 0.6, 1.0],
                     ),
                   ),
                   shadow: Shadow(
                     color: AppColors.primary.withOpacity(0.2),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
+                    blurRadius: 15,
+                    offset: const Offset(0, 8),
                   ),
                 ),
               ],
