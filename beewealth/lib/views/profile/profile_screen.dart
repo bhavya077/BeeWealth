@@ -1,9 +1,12 @@
 import 'dart:ui';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:http/http.dart' as http;
 import '../../providers/auth_provider.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/constants/api_constants.dart';
 import '../../widgets/app_widgets.dart';
 import '../auth/login_screen.dart';
 import '../../models/app_models.dart';
@@ -104,6 +107,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   const SizedBox(height: 48),
+                  _buildSectionHeader('LEGAL & COMPLIANCE'),
+                  const SizedBox(height: 16),
+                  _buildManagementTile(
+                    'TERMS & CONDITIONS',
+                    'Review institutional service agreements',
+                    Icons.gavel_rounded,
+                    () => _showTermsModal(context),
+                  ),
+
+                  const SizedBox(height: 48),
                   _buildSectionHeader('SYSTEMS CONTROL'),
                   const SizedBox(height: 16),
                   _buildSecurityAction(
@@ -131,6 +144,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
+  }
+
+  void _showTermsModal(BuildContext context) {
+    _showTopModal(
+      context,
+      title: 'LEGAL INFRASTRUCTURE',
+      icon: Icons.gavel_rounded,
+      children: [
+        FutureBuilder<Map<String, dynamic>>(
+          future: _fetchTerms(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40),
+                  child: CircularProgressIndicator(color: AppColors.primary, strokeWidth: 2),
+                ),
+              );
+            }
+            if (snapshot.hasError) {
+              return Text(
+                'FAILED TO SYNCHRONIZE LEGAL DATA: ${snapshot.error}',
+                style: const TextStyle(color: AppColors.error, fontSize: 10, fontWeight: FontWeight.bold),
+              );
+            }
+            final content = snapshot.data?['content'] ?? 'NO CONTENT AVAILABLE';
+            return Container(
+              constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.4),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Text(
+                  content,
+                  style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 11, height: 1.6, letterSpacing: 0.2),
+                ),
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<Map<String, dynamic>> _fetchTerms() async {
+    final response = await http.get(Uri.parse('${ApiConstants.baseUrl}${ApiConstants.terms}'));
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('SERVER_ERROR_${response.statusCode}');
+    }
   }
 
   Widget _buildManagementTile(String title, String subtitle, IconData icon, VoidCallback onTap) {
@@ -398,14 +460,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label, style: const TextStyle(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
-              const SizedBox(height: 8), // Added breathing space before content
+              const SizedBox(height: 12), 
               TextField(
                 controller: controller,
+                textAlignVertical: TextAlignVertical.center,
                 style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                 decoration: const InputDecoration(
                   isDense: true,
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.only(top: 4, bottom: 4),
+                  contentPadding: EdgeInsets.only(left: 4, top: 4, bottom: 4),
                 ),
               ),
             ],
