@@ -21,6 +21,6 @@ class ApiConstants {
   static const String users = '/users/';
   
   // Public Paper Trading
-  static const String paperWsPositions = 'wss://api.kalique.xyz/api/public/paper/ws/positions';
+  static const String paperWsPositions = 'wss://api.kalique.xyz:443/api/public/paper/ws/positions';
   static const String paperTodayOrders = 'https://api.kalique.xyz/api/public/paper/today-orders';
 }

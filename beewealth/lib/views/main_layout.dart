@@ -25,29 +25,60 @@ class _MainLayoutState extends State<MainLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.background,
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(top: BorderSide(color: AppColors.glassBorder, width: 1)),
-        ),
-        child: BottomNavigationBar(
-          currentIndex: _currentIndex,
-          onTap: (index) => setState(() => _currentIndex = index),
-          backgroundColor: AppColors.background,
-          selectedItemColor: AppColors.primary,
-          unselectedItemColor: Colors.white24,
-          type: BottomNavigationBarType.fixed,
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home_outlined), activeIcon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.swap_horiz_outlined), activeIcon: Icon(Icons.swap_horiz), label: 'Trade'),
-            BottomNavigationBarItem(icon: Icon(Icons.history_outlined), activeIcon: Icon(Icons.history), label: 'Accounts'),
-            BottomNavigationBarItem(icon: Icon(Icons.person_outline), activeIcon: Icon(Icons.person), label: 'Profile'),
-          ],
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: BackdropFilter(
+              filter: ColorFilter.mode(Colors.black.withOpacity(0.01), BlendMode.dstIn),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF16191F).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: Colors.white.withOpacity(0.05), width: 0.5),
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: _currentIndex,
+                  onTap: (index) => setState(() => _currentIndex = index),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  selectedItemColor: AppColors.primary,
+                  unselectedItemColor: Colors.white24,
+                  type: BottomNavigationBarType.fixed,
+                  selectedFontSize: 10,
+                  unselectedFontSize: 10,
+                  selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w900, letterSpacing: 1),
+                  unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
+                  items: [
+                    _buildNavItem(Icons.grid_view_outlined, Icons.grid_view_rounded, 'TERMINAL', 0),
+                    _buildNavItem(Icons.swap_horiz_outlined, Icons.swap_horiz_rounded, 'TRADE', 1),
+                    _buildNavItem(Icons.account_balance_outlined, Icons.account_balance_rounded, 'LEDGER', 2),
+                    _buildNavItem(Icons.person_outline, Icons.person_rounded, 'PROFILE', 3),
+                  ],
+                ),
+              ),
+            ),
+          ),
         ),
       ),
+    );
+  }
+
+  BottomNavigationBarItem _buildNavItem(IconData icon, IconData activeIcon, String label, int index) {
+    bool isSelected = _currentIndex == index;
+    return BottomNavigationBarItem(
+      icon: Container(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Icon(isSelected ? activeIcon : icon, size: 24),
+      ),
+      label: label,
     );
   }
 }

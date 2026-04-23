@@ -82,7 +82,13 @@ class TradeProvider extends ChangeNotifier {
     
     runZonedGuarded(() async {
       try {
-        final uri = Uri.parse(ApiConstants.paperWsPositions);
+        final url = ApiConstants.paperWsPositions;
+        if (!url.startsWith('ws')) {
+          _handleWsError('Invalid Protocol');
+          return;
+        }
+        
+        final uri = Uri.parse(url);
         _channel = WebSocketChannel.connect(uri);
         
         _subscription = _channel!.stream.listen(
@@ -100,11 +106,14 @@ class TradeProvider extends ChangeNotifier {
                 notifyListeners();
               }
             } catch (e) {
-              debugPrint('Error decoding WS message: $e');
+              // Silently handle decode errors
             }
           },
           onError: (e) {
-            debugPrint('WebSocket Stream Error: $e');
+            // Only log if it's not a common upgrade error (usually meaning market closed)
+            if (!e.toString().contains('not upgraded')) {
+              debugPrint('WS Stream: $e');
+            }
             _handleWsError('Market is currently closed');
           },
           onDone: () {

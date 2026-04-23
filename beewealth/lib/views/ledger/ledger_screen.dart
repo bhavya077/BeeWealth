@@ -471,6 +471,28 @@ Widget _buildRequestSliverList(List<FundRequest> requests) {
                         DateFormat('dd MMM yyyy, hh:mm a').format(req.requestedAt),
                         style: TextStyle(color: Colors.white.withOpacity(0.2), fontSize: 10, fontWeight: FontWeight.w600),
                       ),
+                      if (req.adminNote.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.03),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(Icons.speaker_notes_outlined, color: Colors.white24, size: 10),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  req.adminNote,
+                                  style: const TextStyle(color: Colors.white38, fontSize: 10, fontStyle: FontStyle.italic),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
