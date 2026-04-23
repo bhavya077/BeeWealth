@@ -12,11 +12,13 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   bool _isLoggedIn = false;
+  bool _isInitialized = false;
 
   User? get user => _user;
   bool get isLoading => _isLoading;
   String? get error => _error;
   bool get isLoggedIn => _isLoggedIn;
+  bool get isInitialized => _isInitialized;
 
   void _setLoading(bool value) {
     _isLoading = value;
@@ -93,11 +95,12 @@ class AuthProvider extends ChangeNotifier {
         final response = await _apiService.get(ApiConstants.me);
         _user = User.fromJson(response);
         _isLoggedIn = true;
-        notifyListeners();
       } catch (e) {
-        logout();
+        await logout();
       }
     }
+    _isInitialized = true;
+    notifyListeners();
   }
 
   Future<void> logout() async {

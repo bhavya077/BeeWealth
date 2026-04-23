@@ -71,11 +71,13 @@ class FundRequest {
 
   factory FundRequest.fromJson(Map<String, dynamic> json) {
     return FundRequest(
-      id: json['id'],
-      amount: double.tryParse(json['amount'].toString()) ?? 0.0,
-      status: json['status'],
-      requestedAt: DateTime.parse(json['requested_at']),
-      adminNote: json['admin_note'] ?? '',
+      id: int.tryParse(json['id'].toString()) ?? 0,
+      amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
+      status: json['status']?.toString() ?? 'pending',
+      requestedAt: json['requested_at'] != null 
+          ? DateTime.tryParse(json['requested_at'].toString()) ?? DateTime.now()
+          : DateTime.now(),
+      adminNote: json['admin_note']?.toString() ?? '',
     );
   }
 }
@@ -122,12 +124,12 @@ class LedgerEntry {
 
   factory LedgerEntry.fromJson(Map<String, dynamic> json) {
     return LedgerEntry(
-      id: json['id'] ?? 0,
-      date: json['date'] ?? '',
-      entryType: json['entry_type'] ?? '',
+      id: int.tryParse(json['id']?.toString() ?? '0') ?? 0,
+      date: json['date']?.toString() ?? '',
+      entryType: json['entry_type']?.toString() ?? '',
       amount: double.tryParse(json['amount']?.toString() ?? '0') ?? 0.0,
       unitsDelta: double.tryParse(json['units_delta']?.toString() ?? '0') ?? 0.0,
-      description: json['description'] ?? '',
+      description: json['description']?.toString() ?? '',
     );
   }
 }

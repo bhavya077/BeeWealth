@@ -50,81 +50,135 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
+      backgroundColor: AppColors.background,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white70, size: 20),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: Stack(
         children: [
+          // Background Glows
+          Positioned(
+            top: -50,
+            right: -50,
+            child: Container(
+              width: 250,
+              height: 250,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [AppColors.primary.withOpacity(0.1), Colors.transparent],
+                ),
+              ),
+            ),
+          ),
+          
           SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    FadeInDown(
-                      duration: const Duration(milliseconds: 500),
-                      child: const Text(
-                        'Create Account',
-                        style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primary),
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      FadeInDown(
+                        duration: const Duration(milliseconds: 800),
+                        child: Column(
+                          children: [
+                            const Text(
+                              'Join BeeWealth',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            const Text(
+                              'Start your investment journey now',
+                              style: TextStyle(color: Colors.white54, fontSize: 14),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    FadeInDown(
-                      duration: const Duration(milliseconds: 600),
-                      child: const Text(
-                        'Join the BeeWealth ecosystem today',
-                        style: TextStyle(color: Colors.white54),
+                      const SizedBox(height: 40),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 1000),
+                        child: GlassCard(
+                          padding: const EdgeInsets.all(28),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTextField(
+                                label: 'Full Name',
+                                hint: 'John Doe',
+                                controller: _nameController,
+                                prefixIcon: Icons.person_outline,
+                                validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                              ),
+                              const SizedBox(height: 20),
+                              CustomTextField(
+                                label: 'Email Address',
+                                hint: 'john@example.com',
+                                controller: _emailController,
+                                keyboardType: TextInputType.emailAddress,
+                                prefixIcon: Icons.email_outlined,
+                                validator: (v) {
+                                  if (v == null || v.isEmpty) return 'Email is required';
+                                  if (!v.contains('@')) return 'Enter a valid email';
+                                  return null;
+                                },
+                              ),
+                              const SizedBox(height: 20),
+                              CustomTextField(
+                                label: 'Mobile Number',
+                                hint: '+91 98765 43210',
+                                controller: _mobileController,
+                                keyboardType: TextInputType.phone,
+                                prefixIcon: Icons.phone_android_outlined,
+                                validator: (v) => v!.isEmpty ? 'Mobile is required' : null,
+                              ),
+                              const SizedBox(height: 32),
+                              Consumer<AuthProvider>(
+                                builder: (context, auth, _) {
+                                  return CustomButton(
+                                    text: 'CREATE ACCOUNT',
+                                    isLoading: auth.isLoading,
+                                    onPressed: _register,
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 40),
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 700),
-                      child: CustomTextField(
-                        label: 'Full Name',
-                        hint: 'Enter your name',
-                        controller: _nameController,
-                        prefixIcon: Icons.person_outline,
-                        validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                      const SizedBox(height: 24),
+                      FadeInUp(
+                        duration: const Duration(milliseconds: 1200),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text("Already have an account? ", style: TextStyle(color: Colors.white54)),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text(
+                                'Login',
+                                style: TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 800),
-                      child: CustomTextField(
-                        label: 'Email Address',
-                        hint: 'Enter your email',
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        prefixIcon: Icons.email_outlined,
-                        validator: (v) => v!.isEmpty ? 'Email is required' : null,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 900),
-                      child: CustomTextField(
-                        label: 'Mobile Number',
-                        hint: 'Enter your mobile number',
-                        controller: _mobileController,
-                        keyboardType: TextInputType.phone,
-                        prefixIcon: Icons.phone_android_outlined,
-                        validator: (v) => v!.isEmpty ? 'Mobile is required' : null,
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    FadeInUp(
-                      duration: const Duration(milliseconds: 1000),
-                      child: Consumer<AuthProvider>(
-                        builder: (context, auth, _) {
-                          return CustomButton(
-                            text: 'REGISTER',
-                            isLoading: auth.isLoading,
-                            onPressed: _register,
-                          );
-                        },
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
