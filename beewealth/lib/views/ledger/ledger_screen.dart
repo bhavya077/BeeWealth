@@ -168,9 +168,12 @@ class _LedgerHistoryTabState extends State<LedgerHistoryTab> {
           color: Colors.black,
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            itemCount: dashboard.ledgerEntries.length,
+            itemCount: dashboard.ledgerEntries.length + 1,
             physics: const BouncingScrollPhysics(),
             itemBuilder: (context, index) {
+              if (index == dashboard.ledgerEntries.length) {
+                return const BrandedFooter();
+              }
               final entry = dashboard.ledgerEntries[index];
               final isCredit = entry.amount >= 0;
               
@@ -326,6 +329,9 @@ class _DepositTabState extends State<DepositTab> {
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: _buildRequestSliverList(dashboard.investmentHistory),
             ),
+            const SliverToBoxAdapter(
+              child: BrandedFooter(),
+            ),
           ],
         );
       },
@@ -416,6 +422,9 @@ class _WithdrawTabState extends State<WithdrawTab> {
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               sliver: _buildRequestSliverList(dashboard.withdrawalHistory),
+            ),
+            const SliverToBoxAdapter(
+              child: BrandedFooter(),
             ),
           ],
         );

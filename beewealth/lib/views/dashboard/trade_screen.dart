@@ -77,7 +77,7 @@ class _TradeScreenState extends State<TradeScreen> {
                         _buildSectionTitle("TODAY'S ORDERS", Icons.history_edu),
                         const SizedBox(height: 12),
                         _buildOrdersList(trade.closedOrders),
-                        const SizedBox(height: 100),
+                        const BrandedFooter(),
                       ]),
                     ),
                   ),

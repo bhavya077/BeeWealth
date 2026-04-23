@@ -139,3 +139,57 @@ class CustomTextField extends StatelessWidget {
     );
   }
 }
+class BrandedFooter extends StatelessWidget {
+  const BrandedFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40.0),
+      child: Center(
+        child: Column(
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'MADE WITH ',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.15),
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                ),
+                Icon(
+                  Icons.favorite_rounded,
+                  color: AppColors.primary.withOpacity(0.3),
+                  size: 10,
+                ),
+                Text(
+                  ' BY',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.15),
+                    fontSize: 8,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'BLACKBEEE TECHNOLOGIES',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.2),
+                fontSize: 9,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 3,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

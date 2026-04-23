@@ -135,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
 
                   const SizedBox(height: 64),
-                  _buildSystemDiagnostics(),
+                  const BrandedFooter(),
                   const SizedBox(height: 40),
                 ],
               ),

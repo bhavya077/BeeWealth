@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   _buildChartSection(dashboard),
                   const SizedBox(height: 32),
                   _buildSecondaryStats(dashboard),
-                  const SizedBox(height: 120),
+                  const BrandedFooter(),
                 ]),
               ),
             ),
