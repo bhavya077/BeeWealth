@@ -122,6 +122,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  bool _isAmountVisible = true;
+
   Widget _buildMainPortfolioCard(DashboardProvider dashboard) {
     if (dashboard.isLoading && dashboard.dashboardData == null) {
       return Shimmer.fromColors(
@@ -136,9 +138,22 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'TOTAL EQUITY',
-          style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w600),
+        Row(
+          children: [
+            const Text(
+              'TOTAL EQUITY',
+              style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1.5, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(width: 8),
+            GestureDetector(
+              onTap: () => setState(() => _isAmountVisible = !_isAmountVisible),
+              child: Icon(
+                _isAmountVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                color: Colors.white12,
+                size: 14,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 4),
         FittedBox(
@@ -149,38 +164,42 @@ class _HomeScreenState extends State<HomeScreen> {
             textBaseline: TextBaseline.alphabetic,
             children: [
               Text(
-                currencyFormat.format(data?.currentValue ?? 0).split('.')[0],
+                _isAmountVisible 
+                  ? currencyFormat.format(data?.currentValue ?? 0).split('.')[0]
+                  : '₹ • • • • • •',
                 style: GoogleFonts.outfit(
                   fontSize: 34,
                   fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  letterSpacing: -0.5,
+                  letterSpacing: _isAmountVisible ? -0.5 : 2,
                 ),
               ),
-              Text(
-                '.${(data?.currentValue ?? 0).toStringAsFixed(2).split('.')[1]}',
-                style: GoogleFonts.outfit(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white.withOpacity(0.4),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                decoration: BoxDecoration(
-                  color: (isProfit ? AppColors.success : AppColors.error).withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: Text(
-                  '${isProfit ? '▲' : '▼'} ${((data?.totalProfitLoss ?? 0) / (data?.totalInvestment ?? 1) * 100).toStringAsFixed(2)}%',
-                  style: TextStyle(
-                    color: isProfit ? AppColors.success : AppColors.error,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
+              if (_isAmountVisible)
+                Text(
+                  '.${(data?.currentValue ?? 0).toStringAsFixed(2).split('.')[1]}',
+                  style: GoogleFonts.outfit(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withOpacity(0.4),
                   ),
                 ),
-              ),
+              const SizedBox(width: 8),
+              if (_isAmountVisible)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: (isProfit ? AppColors.success : AppColors.error).withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    '${isProfit ? '▲' : '▼'} ${((data?.totalProfitLoss ?? 0) / (data?.totalInvestment ?? 1) * 100).toStringAsFixed(2)}%',
+                    style: TextStyle(
+                      color: isProfit ? AppColors.success : AppColors.error,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
@@ -426,7 +445,15 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(width: 16),
         Text(label, style: const TextStyle(color: Colors.white54, fontSize: 13, fontWeight: FontWeight.w500)),
         const Spacer(),
-        Text(value, style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+        Text(
+          _isAmountVisible ? value : '₹ • • • •',
+          style: TextStyle(
+            color: Colors.white, 
+            fontSize: 14, 
+            fontWeight: FontWeight.bold,
+            letterSpacing: _isAmountVisible ? 0 : 2,
+          ),
+        ),
       ],
     );
   }
