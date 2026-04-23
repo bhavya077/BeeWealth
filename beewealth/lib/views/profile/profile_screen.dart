@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:animate_do/animate_do.dart';
@@ -245,91 +246,145 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showBankingModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _buildModalWrapper(
-        title: 'BANKING INFRASTRUCTURE',
-        icon: Icons.account_balance_outlined,
-        children: [
-          _buildModalField('Bank Name', _bankNameController, Icons.account_balance_outlined),
-          const Divider(color: Colors.white10, height: 32),
-          _buildModalField('Account No.', _accountNumberController, Icons.tag_rounded),
-          const Divider(color: Colors.white10, height: 32),
-          _buildModalField('IFSC Code', _ifscController, Icons.qr_code_rounded),
-        ],
-      ),
+    _showTopModal(
+      context,
+      title: 'BANKING INFRASTRUCTURE',
+      icon: Icons.account_balance_outlined,
+      children: [
+        _buildModalField('Bank Name', _bankNameController, Icons.account_balance_outlined),
+        const Divider(color: Colors.white10, height: 32),
+        _buildModalField('Account No.', _accountNumberController, Icons.tag_rounded),
+        const Divider(color: Colors.white10, height: 32),
+        _buildModalField('IFSC Code', _ifscController, Icons.qr_code_rounded),
+      ],
     );
   }
 
   void _showUPIModal(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      builder: (context) => _buildModalWrapper(
-        title: 'SETTLEMENT INDICES',
-        icon: Icons.cell_tower_rounded,
-        children: [
-          _buildModalField('UPI Identifier', _upiIdController, Icons.alternate_email_rounded),
-          const Divider(color: Colors.white10, height: 32),
-          _buildModalField('Mobile Index', _upiNumberController, Icons.phone_iphone_rounded),
-        ],
-      ),
+    _showTopModal(
+      context,
+      title: 'SETTLEMENT INDICES',
+      icon: Icons.cell_tower_rounded,
+      children: [
+        _buildModalField('UPI Identifier', _upiIdController, Icons.alternate_email_rounded),
+        const Divider(color: Colors.white10, height: 32),
+        _buildModalField('Mobile Index', _upiNumberController, Icons.phone_iphone_rounded),
+      ],
     );
   }
 
-  Widget _buildModalWrapper({required String title, required IconData icon, required List<Widget> children}) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFF121418),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.all(32.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(icon, color: AppColors.primary, size: 20),
-                      const SizedBox(width: 12),
-                      Text(
-                        title,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 12, letterSpacing: 2),
-                      ),
-                      const Spacer(),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close_rounded, color: Colors.white24, size: 20),
-                      ),
-                    ],
+  void _showTopModal(BuildContext context, {required String title, required IconData icon, required List<Widget> children}) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      barrierColor: Colors.black.withOpacity(0.6),
+      transitionDuration: const Duration(milliseconds: 500),
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: Material(
+            color: Colors.transparent,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF121418).withOpacity(0.85),
+                    borderRadius: const BorderRadius.vertical(bottom: Radius.circular(40)),
+                    border: Border.all(color: AppColors.primary.withOpacity(0.2), width: 0.5),
                   ),
-                  const SizedBox(height: 32),
-                  ...children,
-                  const SizedBox(height: 48),
-                  CustomButton(
-                    text: 'COMMIT DATABASE UPDATES',
-                    onPressed: () {
-                      _updateProfile();
-                      Navigator.pop(context);
-                    },
+                  child: SafeArea(
+                    bottom: false,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(32, 24, 32, 40),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(icon, color: AppColors.primary, size: 16),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 13, letterSpacing: 1.5),
+                                    ),
+                                    Text(
+                                      'SECURE TERMINAL ACCESS',
+                                      style: TextStyle(color: AppColors.primary.withOpacity(0.5), fontSize: 8, fontWeight: FontWeight.bold, letterSpacing: 2),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              IconButton(
+                                onPressed: () => Navigator.pop(context),
+                                icon: const Icon(Icons.close_fullscreen_rounded, color: Colors.white24, size: 20),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 40),
+                          ...List.generate(children.length, (index) {
+                            return FadeInRight(
+                              delay: Duration(milliseconds: 100 * index),
+                              duration: const Duration(milliseconds: 400),
+                              child: children[index],
+                            );
+                          }),
+                          const SizedBox(height: 48),
+                          Center(
+                            child: FadeInUp(
+                              delay: Duration(milliseconds: 100 * children.length),
+                              child: CustomButton(
+                                text: 'EXECUTE DATA COMMIT',
+                                onPressed: () {
+                                  _updateProfile();
+                                  Navigator.pop(context);
+                                },
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // Institutional Accent Line
+                          Center(
+                            child: Container(
+                              width: 40,
+                              height: 3,
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(2),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  const SizedBox(height: 20), // Extra space to clear keyboard suggestions
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween<Offset>(begin: const Offset(0, -0.5), end: Offset.zero).animate(CurvedAnimation(parent: anim1, curve: Curves.easeOutBack)),
+          child: FadeTransition(opacity: anim1, child: child),
+        );
+      },
     );
   }
 
@@ -343,10 +398,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(label, style: const TextStyle(color: Colors.white24, fontSize: 9, fontWeight: FontWeight.bold, letterSpacing: 1)),
+              const SizedBox(height: 8), // Added breathing space before content
               TextField(
                 controller: controller,
                 style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
-                decoration: const InputDecoration(isDense: true, border: InputBorder.none, contentPadding: EdgeInsets.only(top: 6)),
+                decoration: const InputDecoration(
+                  isDense: true,
+                  border: InputBorder.none,
+                  contentPadding: EdgeInsets.only(top: 4, bottom: 4),
+                ),
               ),
             ],
           ),
