@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:animate_do/animate_do.dart';
@@ -28,6 +29,15 @@ class _TradeScreenState extends State<TradeScreen> {
     trade.fetchTodayOrders();
   }
 
+  Future<void> _handleRefresh() async {
+    HapticFeedback.lightImpact();
+    final trade = Provider.of<TradeProvider>(context, listen: false);
+    await Future.wait([
+      trade.connectWebSocket(),
+      trade.fetchTodayOrders(),
+    ]);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,11 +45,14 @@ class _TradeScreenState extends State<TradeScreen> {
       body: Consumer<TradeProvider>(
         builder: (context, trade, _) {
           return RefreshIndicator(
-            onRefresh: () => trade.fetchTodayOrders(),
+            onRefresh: _handleRefresh,
             color: AppColors.primary,
             backgroundColor: AppColors.background,
+            displacement: 40,
+            edgeOffset: 20,
+            strokeWidth: 2,
             child: CustomScrollView(
-              physics: const BouncingScrollPhysics(),
+              physics: const AlwaysScrollableScrollPhysics(parent: BouncingScrollPhysics()),
               slivers: [
                 _buildModernAppBar(trade),
                 if (trade.error != null && trade.positions.isEmpty && trade.closedOrders.isEmpty)
