@@ -8,6 +8,7 @@ import 'providers/dashboard_provider.dart';
 import 'providers/trade_provider.dart';
 import 'views/auth/login_screen.dart';
 import 'views/main_layout.dart';
+import 'views/splash_screen.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -73,11 +74,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
     return Consumer<AuthProvider>(
       builder: (context, auth, _) {
         if (!auth.isInitialized) {
-          return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(color: AppColors.primary),
-            ),
-          );
+          return const SplashScreen();
         }
         
         if (auth.isLoggedIn) {
